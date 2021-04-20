@@ -18,8 +18,7 @@ local TEST_TAG = TAGS[0] + "-test";
       image: "plugins/docker",
       settings: {
         build_args: ["BDS_VERSION=" + BDS_VERSION],
-        repo: FULL_IMAGE_NAME,
-        registry: DOCKER_REGISTRY,
+        // repo: FULL_IMAGE_NAME,
         insecure: true,
         tags: TAGS
       }

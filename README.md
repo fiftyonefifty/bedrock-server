@@ -2,28 +2,42 @@
 Run a bedrock server in a Docker container.
 
 ## Introduction
-This Docker image will download the Bedrock Server app and set it up, along with its dependencies.
+This Docker image will download the Bedrock Server app and set it up, along with its dependencies, and allow attaching to console via shell.
 
 ## Usage
 ### New installation
-1. Prepare the persistent volumes:
+1. This step is not needed if using bind mounts.
+   Prepare the persistent volumes:
     1. Create a volume for the configuration:<br/>
         `docker volume create --name "bedrock-config"`
     2. Create a volume for the worlds:<br/>
         `docker volume create --name "bedrock-worlds"`
 2. Create the Docker container:
+    Named volumes:
     ```bash
-    docker create --name=minecraft -it\
+    docker create --name=minecraft\
         -v "bedrock-config:/bedrock-server/config"\
         -v "bedrock-worlds:/bedrock-server/worlds"\
         -p 19132:19132/udp\
         --restart=unless-stopped\
-        roemer/bedrock-server
+        -it\
+        docker.home.ashkinaziy.net/prod/bedrock-server
+    ```
+
+    Bind mounts:
+     ```bash
+    docker create --name=minecraft\
+        -v "/local/path/to/config:/bedrock-server/config"\
+        -v "/local/path/to/worlds:/bedrock-server/worlds"\
+        -p 19132:19132/udp\
+        --restart=unless-stopped\
+        -it\
+        docker.home.ashkinaziy.net/prod/bedrock-server
     ```
 3. Prepare the config files
     1. Either start the server once and stop it
-    2. or copy the files from the original archives
-3. Configure the default files in the `config` volume:
+    2. or copy the files from the original archive
+4. Configure the default files in the `config` volume or bind mount directory:
     1. Configure the `server.properties` to your likings.
     2. Configure the `whitelist.json` in case you have set `white-list=true` in the above step. Note: The `xuid` is optional and will automatically be added as soon as a matching player connects. Here's an example of a `whitelist.json` file:
         ```json
@@ -53,10 +67,7 @@ This Docker image will download the Bedrock Server app and set it up, along with
 
 ### Updating
 1. Stop the server<br/>
-    ```
-    docker attach minecraft
-    stop
-    ```
+    `docker stop minecraft`
 2. Re-create the server with the new image and the same settings (either `manually` or with `portainer` or Synologys `clean`).<br/>
     NOTE: When updating from 1.7, you need to use the new installation guide and put your `worlds` and `config` files into the newly created volumes or use appropriate volume mappings when creating the container. You also need to rename `ops.json` to `permissions.json`.
 3. Start the server
@@ -65,9 +76,9 @@ This Docker image will download the Bedrock Server app and set it up, along with
 ## Commands
 There are various commands that can be used in the console. To access the console, you need to attach to the container with the following command:
 ```
-docker attach <container-id>
+docker exec -it <container-id or name> /bin/bash
 ```
-To leave the console without exiting the container, use `Ctrl`+`p` + `Ctrl`+`q`.
+To leave the console without exiting the container, use `Ctrl`+`a` + `Ctrl`+`d`. This will also close the shell.
 
 Here are the commands:
 
@@ -78,7 +89,7 @@ Here are the commands:
 | save {`hold` or `resume` or `query`} | Used to make atomic backups while the server is running. See the backup section for more information. |
 | whitelist {`on` or `off` or `list` or `reload`} | `on` and `off` turns the whitelist on and off. Note that this does not change the value in the `server.properties` file!<br />`list` prints the current whitelist used by the server<br />`reload` makes the server reload the whitelist from the file.
 | whitelist {`add` or `remove`} {`name`} | Adds or removes a player from the whitelist file. The name parameter should be the Xbox Gamertag of the player you want to add or remove. You don't need to specify a XUID here, it will be resolved the first time the player connects. |
-| permission {`list` or `reload`} | `list` prints the current used permissions list.<br />`reload` makes the server reload the operator list from the permissions file. |
+| permissions {`list` or `reload`} | `list` prints the current used permissions list.<br />`reload` makes the server reload the operator list from the permissions file. |
 | op {`player name`} | Promote a player to `operator`. This will also persist in `permissions.json` if the player is authenticated to XBL. If `permissions.json` is missing it will be created. If the player is not connected to XBL, the player is promoted for the current server session and it will not be persisted on disk. Default server permission level will be assigned to the player after a server restart. |
 | deop {`player name`} | Demote a player to `member`. This will also persist in `permissions.json` if the player is authenticated to XBL. If `permissions.json` is missing it will be created. |
 | changesetting {`setting`} {`value`} | Changes a server setting without having to restart the server. Currently only two settings are supported to be changed, `allow-cheats` (`true` or `false`) and `difficulty` (0, `peaceful`, 1, `easy`, 2, `normal`, 3 or `hard`). They do not modify the value that's specified in `server.properties`. |

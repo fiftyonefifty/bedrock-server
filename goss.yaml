@@ -2,7 +2,6 @@ file:
   /bedrock-server/config/permissions.json:
     exists: true
     mode: "0644"
-    size: 3
     owner: root
     group: root
     filetype: file
@@ -10,7 +9,6 @@ file:
   /bedrock-server/config/server.properties:
     exists: true
     mode: "0644"
-    size: 3623
     owner: root
     group: root
     filetype: file
@@ -18,7 +16,6 @@ file:
   /bedrock-server/config/whitelist.json:
     exists: true
     mode: "0644"
-    size: 3
     owner: root
     group: root
     filetype: file
@@ -26,7 +23,6 @@ file:
   /bedrock-server/permissions.json:
     exists: true
     mode: "0777"
-    size: 25
     owner: root
     group: root
     linked-to: ./config/permissions.json
@@ -35,7 +31,6 @@ file:
   /bedrock-server/server.properties:
     exists: true
     mode: "0777"
-    size: 26
     owner: root
     group: root
     linked-to: ./config/server.properties
@@ -44,12 +39,17 @@ file:
   /bedrock-server/whitelist.json:
     exists: true
     mode: "0777"
-    size: 23
     owner: root
     group: root
     linked-to: ./config/whitelist.json
     filetype: symlink
     contains: []
+  /bedrock-server/bedrock_server:
+    exists: true
+    mode: "0554"
+    owner: minecraft
+    group: minecraft
+    filetype: file
 port:
   udp:19132:
     listening: true

@@ -13,7 +13,7 @@ on:
 
 env:
   BEDROCK_SERVER_VERSION: '1.16.220.02'
-  REPOSITORY: 'bedrock-server'
+  REPOSITORY: 'bedrock-server-dev'
   ORGANIZATION: '5150collective'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -81,8 +81,7 @@ jobs:
 
       - name: Tag test image
         run: |
-          docker tag local/test:local "$ORGANIZATION/$REPOSITORY:$BEDROCK_SERVER_VERSION"
-          docker tag local/test:local "$ORGANIZATION/$REPOSITORY:latest"
+          docker tag local/test:local "$ORGANIZATION/$REPOSITORY:$GITHUB_HEAD_REF"
         
       - name: Docker Login
       # You may pin to the exact commit or the version.
@@ -94,8 +93,7 @@ jobs:
 
       - name: Publish test images
         run: |
-          docker push "$ORGANIZATION/$REPOSITORY:$BEDROCK_SERVER_VERSION"
-          docker push "$ORGANIZATION/$REPOSITORY:latest"
+          docker push "$ORGANIZATION/$REPOSITORY:$GITHUB_HEAD_REF"
         
         # Pending docker hub rollout: https://github.com/docker/roadmap/issues/115
 #       - name: Update Docker Hub Description

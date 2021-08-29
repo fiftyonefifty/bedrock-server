@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  BEDROCK_SERVER_VERSION: '1.16.220.02'
+  BEDROCK_SERVER_VERSION: '1.17.11.01'
   REPOSITORY: 'bedrock-server-dev'
   ORGANIZATION: '5150collective'
 

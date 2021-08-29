@@ -5,14 +5,11 @@ name: CI
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  pull_request:
+  push:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 env:
-  BEDROCK_SERVER_VERSION: '1.16.220.02'
+  BEDROCK_SERVER_VERSION: '1.17.11.01'
   REPOSITORY: 'bedrock-server'
   ORGANIZATION: '5150collective'
 
@@ -37,15 +34,7 @@ jobs:
         with:
           # List of Docker images to use as base name for tags
           images: ${{env.ORGANIZATION}}/${{env.REPOSITORY}}
-          # List of tags as key-value pair attributes
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
-
+          
       # Sets up Docker Buildx
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v1.1.2
